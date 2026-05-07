@@ -42,3 +42,19 @@ Text, QR code, and portrait are rendered in React/CSS so they stay crisp and eas
 ## Phone tilt note
 
 On iOS, accelerometer access usually requires HTTPS. For testing from your phone, use an HTTPS tunnel such as `ngrok` or `localtunnel`.
+
+## GitHub Pages deployment
+
+This version includes:
+
+- `vite.config.js` with `base: './'`, so assets work from a GitHub Pages project URL.
+- `.github/workflows/deploy.yml`, so GitHub builds the React/Vite app and deploys the generated `dist/` folder automatically.
+
+### Setup
+
+1. Upload the **contents** of this folder to your repo root.
+2. Go to **Settings → Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+4. Push/commit to `main`.
+5. Open the **Actions** tab and wait for “Deploy to GitHub Pages” to finish.
+6. Your site will appear at the Pages URL shown in **Settings → Pages**.
