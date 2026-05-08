@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { BriefcaseBusiness, Building2, ShieldCheck, Sparkles } from 'lucide-react';
 import { cardData } from '../cardData';
@@ -10,17 +10,40 @@ const LINKEDIN_URL = 'https://www.linkedin.com/in/alexander-levero/';
 const PHONE_REST_BETA = 45;
 const PHONE_TILT_RANGE = 32;
 
+function useCoarsePointer() {
+  const [coarse, setCoarse] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia?.('(pointer: coarse), (max-width: 720px)');
+    if (!query) return;
+    const update = () => setCoarse(query.matches);
+    update();
+    query.addEventListener?.('change', update);
+    query.addListener?.(update);
+    return () => {
+      query.removeEventListener?.('change', update);
+      query.removeListener?.(update);
+    };
+  }, []);
+
+  return coarse;
+}
+
 export default function DigitalCard({ motionReady }) {
+  const isCoarsePointer = useCoarsePointer();
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
   const orientationFrame = useRef(null);
+  const pointerFrame = useRef(null);
   const pendingTilt = useRef({ x: 0, y: 0 });
-  const rotateX = useSpring(useTransform(rawY, [-1, 1], [13, -13]), { stiffness: 190, damping: 21 });
-  const rotateY = useSpring(useTransform(rawX, [-1, 1], [-15, 15]), { stiffness: 190, damping: 21 });
-  const glareX = useSpring(useTransform(rawX, [-1, 1], [6, 94]), { stiffness: 120, damping: 18 });
-  const glareY = useSpring(useTransform(rawY, [-1, 1], [6, 94]), { stiffness: 120, damping: 18 });
+  const rotateX = useSpring(useTransform(rawY, [-1, 1], [isCoarsePointer ? 8 : 13, isCoarsePointer ? -8 : -13]), { stiffness: 190, damping: 21 });
+  const rotateY = useSpring(useTransform(rawX, [-1, 1], [isCoarsePointer ? -9 : -15, isCoarsePointer ? 9 : 15]), { stiffness: 190, damping: 21 });
+  const glareX = useSpring(useTransform(rawX, [-1, 1], [8, 92]), { stiffness: isCoarsePointer ? 150 : 120, damping: 20 });
+  const glareY = useSpring(useTransform(rawY, [-1, 1], [8, 92]), { stiffness: isCoarsePointer ? 150 : 120, damping: 20 });
   const foilAngle = useSpring(useTransform(rawX, [-1, 1], [110, 250]), { stiffness: 90, damping: 22 });
   const portraitGloss = useMotionTemplate`linear-gradient(calc(${foilAngle}deg - 48deg), transparent 16%, rgba(255,255,255,.1) 31%, rgba(255,255,255,.38) 40%, rgba(255,246,204,.16) 48%, transparent 64%), radial-gradient(ellipse at ${glareX}% ${glareY}%, rgba(255,255,255,.32), rgba(255,255,255,.12) 12%, rgba(255,255,255,0) 38%)`;
+  const attributeShine = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,.86) 0 11%, rgba(255,245,197,.42) 17%, rgba(255,255,255,0) 36%), linear-gradient(calc(${foilAngle}deg - 40deg), transparent 24%, rgba(255,255,255,.08) 38%, rgba(255,255,255,.52) 48%, rgba(255,237,162,.18) 56%, transparent 68%)`;
+  const attributeGlyph = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,.96) 0 10%, rgba(255,255,255,.72) 18%, rgba(255,239,171,.28) 31%, rgba(255,255,255,0) 44%), linear-gradient(calc(${foilAngle}deg - 40deg), rgba(255,244,173,.92), rgba(255,255,255,.98) 24%, rgba(105,240,255,.94) 44%, rgba(255,113,207,.9) 61%, rgba(255,212,93,.96) 78%, rgba(255,248,204,.94))`;
 
   useEffect(() => {
     const handleOrientation = (event) => {
@@ -38,26 +61,42 @@ export default function DigitalCard({ motionReady }) {
         orientationFrame.current = null;
       });
     };
-    window.addEventListener('deviceorientation', handleOrientation, true);
+    window.addEventListener('deviceorientation', handleOrientation, { passive: true });
     return () => {
-      window.removeEventListener('deviceorientation', handleOrientation, true);
+      window.removeEventListener('deviceorientation', handleOrientation);
       if (orientationFrame.current) window.cancelAnimationFrame(orientationFrame.current);
       orientationFrame.current = null;
     };
   }, [motionReady, rawX, rawY]);
 
+  useEffect(() => () => {
+    if (pointerFrame.current) window.cancelAnimationFrame(pointerFrame.current);
+  }, []);
+
   const handlePointerMove = (event) => {
     if (motionReady) return;
     const rect = event.currentTarget.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    const y = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-    rawX.set(clamp(x, -1, 1));
-    rawY.set(clamp(y, -1, 1));
+    const next = {
+      x: clamp(((event.clientX - rect.left) / rect.width) * 2 - 1, -1, 1),
+      y: clamp(((event.clientY - rect.top) / rect.height) * 2 - 1, -1, 1)
+    };
+    pendingTilt.current = next;
+    if (pointerFrame.current) return;
+    pointerFrame.current = window.requestAnimationFrame(() => {
+      rawX.set(pendingTilt.current.x);
+      rawY.set(pendingTilt.current.y);
+      pointerFrame.current = null;
+    });
   };
+
+  const cardClassName = useMemo(
+    () => `digital-card ${isCoarsePointer ? 'is-mobile-optimized' : ''}`,
+    [isCoarsePointer]
+  );
 
   return (
     <motion.article
-      className="digital-card"
+      className={cardClassName}
       style={{ rotateX, rotateY, transformPerspective: 1400 }}
       initial={{ y: 170, scale: 0.74, opacity: 0, rotateX: 18 }}
       animate={{ y: 0, scale: 1, opacity: 1, rotateX: 0 }}
@@ -76,14 +115,17 @@ export default function DigitalCard({ motionReady }) {
       onDragStart={(event) => event.preventDefault()}
     >
       <div className="card-frame" aria-hidden="true" />
-      <FoilLayers glareX={glareX} glareY={glareY} foilAngle={foilAngle} />
+      <FoilLayers glareX={glareX} glareY={glareY} foilAngle={foilAngle} compact={isCoarsePointer} />
 
       <div className="editable-layer">
         <div className="card-title-panel">
           <div className="card-rarity"><Sparkles size={18} /> {cardData.rarity}</div>
           <div className="card-name">{cardData.name}</div>
         </div>
-        <div className="attribute-badge"><span>{cardData.attribute}</span></div>
+        <div className="attribute-badge">
+          <motion.div className="attribute-shine" style={{ background: attributeShine }} aria-hidden="true" />
+          <motion.span style={{ background: attributeGlyph }}>{cardData.attribute}</motion.span>
+        </div>
 
         <div className="portrait-slot">
           <img src={profileImg} alt={`${cardData.name} profile`} draggable="false" />

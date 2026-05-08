@@ -646,6 +646,9 @@ button, input, textarea { font: inherit; }
   isolation: isolate;
   container-type: inline-size;
   transform-style: preserve-3d;
+  contain: layout style paint;
+  will-change: transform;
+  backface-visibility: hidden;
   box-shadow: 0 36px 100px rgba(0, 0, 0, .68), 0 0 0 1px rgba(255, 255, 255, .12), 0 0 54px rgba(255, 218, 125, .12);
   touch-action: none;
   cursor: default;
@@ -711,7 +714,9 @@ button, input, textarea { font: inherit; }
   pointer-events: none;
   z-index: 2;
   transition: opacity 180ms ease;
+  will-change: opacity, background;
 }
+
 
 .foil-holo-color {
   mix-blend-mode: color-dodge;
@@ -907,8 +912,8 @@ button, input, textarea { font: inherit; }
     inset -6px -8px 12px rgba(51, 11, 2, .48),
     0 2px 0 rgba(70, 20, 0, .36),
     0 0 14px rgba(255, 209, 93, .2);
-  animation: orbFoilPulse 3.8s ease-in-out infinite alternate;
 }
+
 
 .attribute-badge::before,
 .attribute-badge::after {
@@ -921,38 +926,51 @@ button, input, textarea { font: inherit; }
 
 .attribute-badge::before {
   z-index: 0;
-  inset: -18%;
+  inset: -10%;
   background:
     conic-gradient(from -10deg at 50% 50%, transparent 0 8deg, rgba(255, 246, 176, .68) 9deg 12deg, transparent 13deg 34deg, rgba(80, 231, 255, .44) 35deg 39deg, transparent 40deg 76deg, rgba(255, 89, 204, .42) 77deg 81deg, transparent 82deg 119deg, rgba(255, 165, 45, .44) 120deg 125deg, transparent 126deg 360deg),
     radial-gradient(circle at 50% 50%, rgba(255, 246, 176, .52) 0 13%, rgba(255, 177, 50, .18) 14% 35%, transparent 66%);
   filter: blur(.1px);
   box-shadow: inset 0 0 0 1px rgba(255, 226, 122, .24);
-  animation: orbFoilSpin 7.5s linear infinite;
 }
 
+
 .attribute-badge::after {
-  inset: -34%;
+  inset: -16%;
   z-index: 0;
   background:
     linear-gradient(118deg, transparent 18%, rgba(255, 255, 255, .12) 31%, rgba(255, 255, 255, .72) 42%, rgba(255, 238, 149, .22) 51%, transparent 64%),
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, .32) 0 10%, transparent 11%),
     linear-gradient(145deg, rgba(255, 255, 255, .34), transparent 34%, rgba(60, 13, 2, .2) 76%);
   mix-blend-mode: screen;
-  transform: translateX(-34%) rotate(8deg);
-  animation: orbGlareSweep 3.4s ease-in-out infinite;
+  transform: translateX(3%) rotate(8deg);
 }
+
+
+.attribute-shine {
+  position: absolute;
+  inset: -12%;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: .92;
+  will-change: background;
+}
+
 
 .attribute-badge span {
   position: relative;
   z-index: 1;
   background: linear-gradient(100deg, #fff4ad 0%, #fff 22%, #69f0ff 42%, #ff71cf 58%, #ffd45d 75%, #fff8cc 100%);
-  background-size: 230% 100%;
+  background-size: 100% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 1px 0 rgba(77, 32, 0, .8)) drop-shadow(0 0 9px rgba(255, 231, 130, .74));
-  animation: textFoilSweep 3.2s ease-in-out infinite alternate;
+  will-change: background;
 }
+
 
 .portrait-slot {
   position: absolute;
@@ -983,6 +1001,7 @@ button, input, textarea { font: inherit; }
   pointer-events: none;
   opacity: .58;
   mix-blend-mode: screen;
+  will-change: background;
 }
 
 .card-picture-meta {
@@ -1449,6 +1468,27 @@ button, input, textarea { font: inherit; }
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
+}
+
+
+.digital-card.is-mobile-optimized .card-frame {
+  box-shadow:
+    inset 0 0 0 3cqw rgba(45, 22, 6, .9),
+    inset 0 0 0 4.7cqw rgba(253, 227, 160, .42),
+    inset 0 0 0 6.2cqw rgba(51, 23, 6, .5);
+}
+
+.digital-card.is-mobile-optimized .foil-compact {
+  filter: none;
+}
+
+.digital-card.is-mobile-optimized .portrait-gloss {
+  opacity: .42;
+}
+
+.digital-card.is-mobile-optimized .attribute-badge::before,
+.digital-card.is-mobile-optimized .attribute-badge::after {
+  display: none;
 }
 
 @media (max-height: 660px) {
