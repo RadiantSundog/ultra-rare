@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AnimatePresence, motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Scissors, Sparkles } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Scissors } from 'lucide-react';
 import './styles.css';
-import { cardData } from './cardData';
 import BoosterPack from './components/BoosterPack';
 import DigitalCard from './components/DigitalCard';
 
@@ -48,8 +47,8 @@ function App() {
   };
 
   const ctaText = useMemo(() => {
-    if (permissionState === 'requesting') return 'Requesting tilt…';
-    if (permissionState === 'denied') return 'Tilt blocked — touch foil still works';
+    if (permissionState === 'requesting') return 'Requesting tilt...';
+    if (permissionState === 'denied') return 'Tilt blocked - touch foil still works';
     if (motionReady) return 'Phone tilt foil enabled';
     return 'Enable phone tilt foil';
   }, [permissionState, motionReady]);
@@ -70,10 +69,6 @@ function App() {
             exit={{ opacity: 0, scale: 1.04, filter: 'blur(8px)' }}
             transition={{ duration: 0.35 }}
           >
-            <div className="intro-copy">
-              <p><Sparkles size={15} /> Scan reveal prototype</p>
-              <h1>{cardData.name}</h1>
-            </div>
             <BoosterPack onOpened={() => setOpened(true)} />
           </motion.section>
         ) : (

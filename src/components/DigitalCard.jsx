@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ShieldCheck, Sparkles } from 'lucide-react';
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { BriefcaseBusiness, Building2, ShieldCheck, Sparkles } from 'lucide-react';
 import { cardData } from '../cardData';
-import textlessCard from '../assets/card-textless.svg';
 import profileImg from '../assets/profile_img.jpg';
-import qrImg from '../assets/linkedin_qr.jpg';
 import FoilLayers from './FoilLayers';
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const LINKEDIN_URL = 'https://www.linkedin.com/in/alexander-levero/';
 
 export default function DigitalCard({ motionReady }) {
   const rawX = useMotionValue(0);
@@ -17,7 +16,7 @@ export default function DigitalCard({ motionReady }) {
   const glareX = useSpring(useTransform(rawX, [-1, 1], [6, 94]), { stiffness: 120, damping: 18 });
   const glareY = useSpring(useTransform(rawY, [-1, 1], [6, 94]), { stiffness: 120, damping: 18 });
   const foilAngle = useSpring(useTransform(rawX, [-1, 1], [110, 250]), { stiffness: 90, damping: 22 });
-  const burstSpin = useSpring(useTransform(rawX, [-1, 1], [-24, 24]), { stiffness: 90, damping: 22 });
+  const portraitGloss = useMotionTemplate`linear-gradient(calc(${foilAngle}deg - 48deg), transparent 16%, rgba(255,255,255,.1) 31%, rgba(255,255,255,.38) 40%, rgba(255,246,204,.16) 48%, transparent 64%), radial-gradient(ellipse at ${glareX}% ${glareY}%, rgba(255,255,255,.32), rgba(255,255,255,.12) 12%, rgba(255,255,255,0) 38%)`;
 
   useEffect(() => {
     const handleOrientation = (event) => {
@@ -47,6 +46,9 @@ export default function DigitalCard({ motionReady }) {
       initial={{ y: 170, scale: 0.74, opacity: 0, rotateX: 18 }}
       animate={{ y: 0, scale: 1, opacity: 1, rotateX: 0 }}
       transition={{ type: 'spring', stiffness: 95, damping: 16, delay: 0.08 }}
+      onPointerDown={(event) => {
+        if (!event.target.closest('a')) event.preventDefault();
+      }}
       onPointerMove={handlePointerMove}
       onPointerLeave={() => {
         if (!motionReady) {
@@ -54,21 +56,36 @@ export default function DigitalCard({ motionReady }) {
           rawY.set(0);
         }
       }}
+      onContextMenu={(event) => event.preventDefault()}
+      onDragStart={(event) => event.preventDefault()}
     >
-      <img className="card-bg" src={textlessCard} alt="Textless collectible card background" />
-      <FoilLayers glareX={glareX} glareY={glareY} foilAngle={foilAngle} burstSpin={burstSpin} />
+      <div className="card-frame" aria-hidden="true" />
+      <FoilLayers glareX={glareX} glareY={glareY} foilAngle={foilAngle} />
 
       <div className="editable-layer">
-        <div className="card-rarity"><Sparkles size={18} /> {cardData.rarity}</div>
-        <div className="card-name">{cardData.name}</div>
+        <div className="card-title-panel">
+          <div className="card-rarity"><Sparkles size={18} /> {cardData.rarity}</div>
+          <div className="card-name">{cardData.name}</div>
+        </div>
         <div className="attribute-badge">{cardData.attribute}</div>
 
         <div className="portrait-slot">
-          <img src={profileImg} alt={`${cardData.name} profile`} />
-          <div className="portrait-foil" />
+          <img src={profileImg} alt={`${cardData.name} profile`} draggable="false" />
+          <motion.div className="portrait-gloss" style={{ background: portraitGloss }} />
         </div>
 
-        <div className="title-line">[ {cardData.titles} ]</div>
+        <div className="card-traits">
+          <div className="trait-line">
+            <BriefcaseBusiness size={17} />
+            <strong>Type:</strong>
+            <span>{cardData.types}</span>
+          </div>
+          <div className="trait-line">
+            <Building2 size={17} />
+            <strong>Guilds:</strong>
+            <span>{cardData.companies}</span>
+          </div>
+        </div>
 
         <div className="effect-copy">
           <strong><ShieldCheck size={18} /> Effect</strong>
@@ -82,10 +99,16 @@ export default function DigitalCard({ motionReady }) {
           <b>DEF {cardData.def}</b>
         </div>
 
-        <div className="qr-box">
-          <span className="linkedin-mark">in</span>
-          <img src={qrImg} alt="LinkedIn QR code" />
-        </div>
+        <a
+          className="qr-box linkedin-link"
+          href={LINKEDIN_URL}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Open Alexander Levero on LinkedIn"
+          onPointerDown={(event) => event.stopPropagation()}
+        >
+          <span className="linkedin-mark" aria-hidden="true">in</span>
+        </a>
       </div>
     </motion.article>
   );

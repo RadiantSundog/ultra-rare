@@ -4,9 +4,10 @@ A self-hostable React + Framer Motion microsite for a QR-code landing page:
 
 1. Visitor scans a QR code pointing to this hosted page.
 2. They see a sealed booster pack.
-3. They swipe the top tear strip to rip it open.
-4. A full-screen holographic digital business card pops out.
-5. The foil responds to pointer movement on desktop and phone tilt on mobile.
+3. They tap the pack to focus the top edge.
+4. They swipe the glowing top edge to rip it open.
+5. A full-screen holographic digital business card pops out.
+6. The foil responds to pointer movement on desktop and phone tilt on mobile.
 
 ## Run locally
 
@@ -29,21 +30,18 @@ Host the contents of `dist/` on your static host.
 
 Edit `src/cardData.js` for text, labels, ATK/DEF, serial, and pack labels.
 
-The card background is intentionally textless: `src/assets/card-textless.svg`.
-Text, QR code, and portrait are rendered in React/CSS so they stay crisp and easy to update.
+The booster pack and card frame are rendered in React/CSS rather than static background art.
+Text, the LinkedIn icon link, and portrait are rendered as real UI layers so they stay crisp and easy to update.
 
 ## Assets
 
-- `src/assets/profile_img.jpg` — profile portrait
-- `src/assets/linkedin_qr.jpg` — LinkedIn QR shown on the revealed card
-- `src/assets/card-textless.svg` — blank card frame/background
-- `src/assets/pack-blank.svg` — blank booster pack art
+- `src/assets/profile_img.jpg` - profile portrait
 
-## Phone tilt note
+## Phone Tilt Note
 
 On iOS, accelerometer access usually requires HTTPS. For testing from your phone, use an HTTPS tunnel such as `ngrok` or `localtunnel`.
 
-## GitHub Pages deployment
+## GitHub Pages Deployment
 
 This version includes:
 
@@ -52,9 +50,9 @@ This version includes:
 
 ### Setup
 
-1. Upload the **contents** of this folder to your repo root.
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+1. Upload the contents of this folder to your repo root.
+2. Go to Settings > Pages.
+3. Under Build and deployment, set Source to GitHub Actions.
 4. Push/commit to `main`.
-5. Open the **Actions** tab and wait for “Deploy to GitHub Pages” to finish.
-6. Your site will appear at the Pages URL shown in **Settings → Pages**.
+5. Open the Actions tab and wait for Deploy to GitHub Pages to finish.
+6. Your site will appear at the Pages URL shown in Settings > Pages.
