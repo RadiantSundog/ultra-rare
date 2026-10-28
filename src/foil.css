@@ -1,0 +1,24 @@
+﻿/* Fixed textures move beneath the incident light; no per-frame gradient rebuilds. */
+.foil-surface { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 2; isolation: isolate; }
+.foil { position: absolute; inset: -34%; pointer-events: none; backface-visibility: hidden; will-change: transform; }
+.foil-spectrum {
+  background: repeating-linear-gradient(116deg, #e9b1f0 0%, #837be4 6%, #73cedb 12%, #bce5b3 18%, #fff0b6 24%, #efb997 30%, #e9b1f0 36%);
+  mix-blend-mode: color-dodge; opacity: .44;
+  mask-image: linear-gradient(120deg, transparent 15%, #000 35%, #0008 50%, #000 65%, transparent 85%);
+}
+.foil-etching {
+  background: repeating-linear-gradient(126deg, #fff7cb88 0 .7px, transparent .7px 5px), url('./assets/foil-facets.svg');
+  background-size: 100% 100%, 160px 160px;
+  mix-blend-mode: soft-light; opacity: .72;
+  mask-image: linear-gradient(105deg, transparent 22%, #000 48%, transparent 76%);
+}
+.foil-reflection {
+  background: linear-gradient(118deg, transparent 33%, #fff9e220 43%, #ffffff90 47%, #fffde12a 50%, transparent 58%),
+    radial-gradient(ellipse at 48% 42%, #fff9e966, transparent 33%);
+  mix-blend-mode: screen; opacity: .55;
+}
+.portrait-foil { position: absolute; inset: 0; z-index: 1; opacity: .55; pointer-events: none; }
+.portrait-foil .foil-spectrum { mix-blend-mode: color-dodge; opacity: .4; }
+.portrait-foil .foil-etching { opacity: .52; }
+.portrait-foil .foil-reflection { opacity: .3; }
+.foil-compact .foil-etching { background-image: url('./assets/foil-facets.svg'); background-size: 140px 140px; }

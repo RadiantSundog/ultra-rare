@@ -1,0 +1,138 @@
+﻿/* Body and tear strip use the same registered texture. */
+.pack-wrap {
+  width: min(calc(var(--vvw) - 72px), 360px, calc((var(--vvh) - 132px) * var(--pack-aspect)));
+  perspective: 1200px; position: relative;
+}
+.pack {
+  position: relative; width: 100%; aspect-ratio: 900 / 1400; container-type: inline-size;
+  isolation: isolate; user-select: none; -webkit-user-select: none; touch-action: none;
+  filter: drop-shadow(0 25px 28px #0009);
+}
+.pack-body, .pack-art, .pack-holo, .pack-gloss, .pack-top { position: absolute; inset: 0; }
+.pack-body {
+  overflow: hidden; border-radius: 1.5%;
+  clip-path: polygon(0 12%, 4% 12.3%, 8% 11.8%, 13% 12.2%, 18% 11.9%, 24% 12.4%, 30% 12%, 37% 12.3%, 43% 11.8%, 50% 12.2%, 57% 12%, 64% 12.4%, 71% 11.9%, 78% 12.2%, 85% 11.8%, 92% 12.3%, 100% 12%, 100% 100%, 0 100%);
+}
+.pack-art, .pack-top { background: #17100c url('./assets/pack-celestial.jpg') center / 100% 100% no-repeat; }
+.pack-top {
+  z-index: 4; transform-origin: 100% 12%;
+  clip-path: polygon(0 0, 100% 0, 100% 12.2%, 92% 12.5%, 85% 12%, 78% 12.4%, 71% 12.1%, 64% 12.6%, 57% 12.2%, 50% 12.4%, 43% 12%, 37% 12.5%, 30% 12.2%, 24% 12.6%, 18% 12.1%, 13% 12.4%, 8% 12%, 4% 12.5%, 0 12.2%);
+}
+.pack-holo {
+  background: linear-gradient(115deg, transparent 22%, #b7ffe71c 32%, #d3a6ff24 39%, #ffbd8420 46%, transparent 55%);
+  mix-blend-mode: color-dodge; opacity: .6;
+}
+.pack-gloss {
+  background: linear-gradient(98deg, #0008, transparent 6%, #fff2 8%, transparent 12%, transparent 84%, #fff2 91%, #0007 99%);
+  pointer-events: none;
+}
+.pack-title-mark {
+  position: absolute; top: 17%; left: 12%; right: 12%; text-align: center; display: grid; gap: 2.1cqw;
+  font-family: Copperplate, 'Palatino Linotype', Georgia, serif; color: #f6df9f;
+  text-shadow: 0 2px 2px #000, 0 0 12px #000;
+}
+.pack-series { font-size: 2.3cqw; text-transform: uppercase; letter-spacing: .19em; }
+.pack-title-mark strong { font-size: 8.2cqw; line-height: .93; letter-spacing: -.035em; font-weight: 900; }
+.pack-title-mark em {
+  font-size: 3cqw; font-style: normal; letter-spacing: .3em;
+  border-block: 1px solid #bda37380; padding: 1.5cqw 0; margin: 0 12%;
+}
+.pack-print {
+  position: absolute; bottom: 13%; left: 10%; right: 10%; color: #e6d1a0;
+  display: grid; text-align: center; gap: 1.6cqw;
+  font: 2.1cqw Georgia, serif; letter-spacing: .14em; text-shadow: 0 1px 3px #000, 0 0 8px #000;
+}
+.pack-print b { font-size: 3cqw; letter-spacing: .21em; }
+.pack-edition { font-style: italic; font-size: 3.4cqw; letter-spacing: .08em; }
+.pack-print i { margin: 0 1.8cqw; }
+.tear-lane {
+  position: absolute; z-index: 8; top: calc(12% - 26px); left: 6%; width: 88%; height: 52px;
+  padding: 0; background: none; border: 0; color: #f8e6b8;
+  cursor: ew-resize; touch-action: none; -webkit-tap-highlight-color: transparent;
+}
+.tear-lane:focus-visible { outline: 2px solid #ffe4a4; outline-offset: 5px; }
+.swipe-instruction {
+  position: absolute; bottom: calc(100% + 8px); left: 0; width: 100%;
+  font: 9px Georgia, serif; text-transform: uppercase; letter-spacing: .23em; text-shadow: 0 1px 4px #000;
+}
+.tear-track, .tear-progress { position: absolute; left: 0; right: 0; top: 25px; height: 2px; pointer-events: none; }
+.tear-track { background: linear-gradient(90deg, #ffe2a6, #ffe2a670 75%, transparent); box-shadow: 0 0 8px #ffc24e80; }
+.tear-progress { background: #fffbe7; box-shadow: 0 0 9px #fff2b5, 0 0 21px #ffa834; transform-origin: left; }
+.tear-flare {
+  position: absolute; top: 26px; width: 32px; height: 32px; translate: -50% -50%;
+  display: grid; place-items: center; border: 1px solid #fff0b7a8; border-radius: 50%;
+  background: radial-gradient(circle, #fff3c630, #ffb64720 50%, transparent 72%);
+  box-shadow: 0 0 18px #ffcd6760, inset 0 0 9px #fff2bc38;
+}
+.tear-flare span { font: 25px Georgia, serif; line-height: 1; translate: 1px -1px; }
+.is-dragging .tear-flare { background: #fff7c8; color: #7e4b18; box-shadow: 0 0 24px #ffe1a6; }
+.pack-mouth {
+  position: absolute; top: 12%; left: 4%; right: 4%; height: 4%;
+  background: radial-gradient(ellipse, #fff 0, #fff3c7 20%, #ffc24c88 42%, transparent 70%); opacity: 0; pointer-events: none;
+}
+.ripped .pack-mouth { animation: mouthLight .8s ease-out both; }
+.ripped .pack-body { animation: wrapperFall .9s cubic-bezier(.5,0,.8,.4) .12s both; }
+.ripped .tear-lane { opacity: 0; pointer-events: none; }
+@keyframes wrapperFall {
+  0%, 12% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(48%) rotate(8deg) scale(.94); opacity: 0; }
+}
+@keyframes mouthLight {
+  0% { opacity: 0; transform: scaleX(.3); }
+  25%, 45% { opacity: 1; transform: scale(1.2, 2.5); }
+  100% { opacity: 0; transform: scale(1.5, 4); }
+}
+.reveal-burst { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; }
+.burst-halo, .burst-rays, .burst-ring, .burst-core {
+  position: absolute; left: 50%; top: 44%; translate: -50% -50%;
+  width: min(100vw, 850px); aspect-ratio: 1; opacity: 0;
+}
+.burst-halo {
+  background: radial-gradient(circle, #fff2cfaa, #f3be6550 22%, #b77b2820 42%, transparent 68%);
+  animation: burstBloom 1.8s ease-out both;
+}
+.burst-core {
+  width: min(65vw, 440px);
+  background: radial-gradient(circle, #fff 0, #fff4d6ee 8%, #ffe7a777 23%, #f6bc3e22 44%, transparent 68%);
+  animation: burstBloom 1.65s .08s ease-out both;
+}
+.burst-rays {
+  background: repeating-conic-gradient(from 12deg, transparent 0deg 17deg, #ffdf9c55 18deg, transparent 20deg 30deg);
+  mask-image: radial-gradient(circle, transparent 5%, #000 18%, transparent 65%);
+  animation: burstRays 1.65s ease-out both;
+}
+.burst-ring {
+  width: 180px; border: 1px solid #ffe7ad88; border-radius: 50%;
+  box-shadow: 0 0 24px #ffc95740, inset 0 0 14px #ffe9af30; animation: burstRing 1.2s .18s ease-out both;
+}
+.burst-mote {
+  position: absolute; left: 50%; top: 44%; width: 3px; height: 3px; border-radius: 50%;
+  background: #fff3c6; box-shadow: 0 0 6px #ffd879; opacity: 0;
+  animation: burstMote 1.5s var(--delay) ease-out both;
+}
+@keyframes burstBloom {
+  0% { transform: scale(.12); opacity: 0; }
+  24% { opacity: 1; } 50% { opacity: .85; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+@keyframes burstRays {
+  0% { transform: rotate(-12deg) scale(.15); opacity: 0; }
+  28% { opacity: .8; }
+  100% { transform: rotate(12deg) scale(1.4); opacity: 0; }
+}
+@keyframes burstRing {
+  0% { transform: scale(.1); opacity: 0; } 20% { opacity: .7; }
+  100% { transform: scale(3.4); opacity: 0; }
+}
+@keyframes burstMote {
+  0% { transform: rotate(var(--angle)) translateY(0); opacity: 0; } 15% { opacity: 1; }
+  100% { transform: rotate(var(--angle)) translateY(var(--travel)); opacity: 0; }
+}
+@media (max-width: 720px) {
+  .pack-wrap { width: min(calc(var(--vvw) - 64px), 360px, calc((var(--vvh) - 120px) * var(--pack-aspect))); }
+}
+
+.pack-title-mark strong { white-space: pre-line; }
+.swipe-instruction { bottom: calc(100% + 36px); font-size: 10px; }
+
+.tear-flare { z-index: 1; background: radial-gradient(circle at 35% 25%, #695129, #20170d 75%); border-color: #ffe1a0; }
